@@ -19,6 +19,7 @@ coverage/
 # Local photos, vectors, and model caches
 uploads/
 qdrant_storage/
+data/
 .cache/
 
 # Editor and operating system files
