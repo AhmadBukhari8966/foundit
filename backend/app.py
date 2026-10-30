@@ -13,6 +13,7 @@ from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.concurrency import run_in_threadpool
 from PIL import Image, ImageOps, UnidentifiedImageError
 from pydantic import BaseModel, Field, field_validator
 from qdrant_client import QdrantClient, models
@@ -106,6 +107,8 @@ def create_app(data_dir=None, encoder=None):
         app.state.db = client
         app.state.encoder = clip
         try:
+            if os.environ.get("FOUNDIT_PRELOAD_MODEL") == "1":
+                await run_in_threadpool(clip.load)
             yield
         finally:
             client.close()

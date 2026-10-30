@@ -2,6 +2,8 @@
 
 A campus lost-and-found app. Post a photo of a found item, then search for possible matches using a description or another photo.
 
+For full-app public deployment, see [hosting instructions](docs/HOSTING.md). The repository includes a Dockerfile and a Render deployment template. Committing the template does not create a hosted service.
+
 ## Run locally
 
 The backend dependencies and CLIP weights are already installed on the development machine. For a single-server demo, run:

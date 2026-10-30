@@ -15,7 +15,7 @@ class EmbeddingUnavailable(RuntimeError):
 
 class ClipEncoder:
     def __init__(self, cache_dir: Path):
-        self.cache_dir = cache_dir
+        self.cache_dir = Path(os.environ.get("FOUNDIT_MODEL_DIR", cache_dir))
         self.model = None
         self.lock = RLock()
 

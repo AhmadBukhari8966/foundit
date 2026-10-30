@@ -141,3 +141,14 @@ def test_image_search_applies_dates(client):
         files={"image":("query.png", image_bytes(), "image/png")})
     assert response.status_code == 200
     assert response.json()["items"] == []
+
+
+def test_hosted_startup_preloads_model(tmp_path, monkeypatch):
+    class WarmableEncoder(TestEncoder):
+        ready = False
+        def load(self):
+            self.ready = True
+    monkeypatch.setenv("FOUNDIT_PRELOAD_MODEL", "1")
+    encoder = WarmableEncoder()
+    with TestClient(create_app(tmp_path, encoder)) as client:
+        assert client.get("/api/health").json()["model_loaded"] is True

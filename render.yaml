@@ -1,0 +1,21 @@
+# Deployment template only. Creating these resources incurs hosting charges.
+# Confirm the provider's current compute and storage price before applying.
+services:
+  - type: web
+    name: foundit
+    runtime: docker
+    plan: 2c-4g
+    region: ohio
+    numInstances: 1
+    autoDeployTrigger: "off"
+    healthCheckPath: /api/health
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: foundit-data
+      mountPath: /data
+      sizeGB: 10
+    envVars:
+      - key: FOUNDIT_DATA_DIR
+        value: /data
+      - key: FOUNDIT_PRELOAD_MODEL
+        value: "1"
