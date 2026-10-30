@@ -2,7 +2,7 @@
 
 A campus lost-and-found app. Post a photo of a found item, then search for possible matches using a description or another photo.
 
-For full-app public deployment, see [hosting instructions](docs/HOSTING.md). The repository includes a Dockerfile and a Render deployment template. Committing the template does not create a hosted service.
+For the requested free public deployment, see [GitHub Pages + Supabase setup](docs/FREE-HOSTING.md). This uses browser-run CLIP and PostgreSQL/pgvector with persistent photo storage. The original local FastAPI + Qdrant app remains available. A paid Render template is also included but is not being deployed. No public service is provisioned by committing these files.
 
 ## Run locally
 

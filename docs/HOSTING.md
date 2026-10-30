@@ -1,4 +1,6 @@
-# Public hosting
+# Container hosting (optional paid alternative)
+
+The requested zero-cost deployment uses [GitHub Pages + Supabase](FREE-HOSTING.md). The Render configuration below is an optional paid alternative and has not been applied.
 
 The full app runs as one Docker container: FastAPI serves the built React frontend, the API, and uploaded photos. CLIP runs on CPU inside that container. GitHub stores the source; GitHub Pages cannot run this backend.
 

@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import "./styles.css";
+const hosted = Boolean(import.meta.env.VITE_SUPABASE_URL);
 
 const photo = (id) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=900&q=85`;
@@ -40,6 +41,10 @@ const dateLabel = (date) =>
     day: "numeric",
   });
 async function api(path, options = {}) {
+  if (hosted) {
+    const { hostedApi } = await import("./supabase-api.js");
+    return hostedApi(path, options);
+  }
   let response;
   try {
     response = await fetch(`/api${path}`, options);
@@ -77,6 +82,12 @@ const readStored = (key, fallback) => {
 
 function App() {
   const [items, setItems] = useState([]);
+  const [modelProgress, setModelProgress] = useState("");
+  useEffect(() => {
+    const update = (event) => setModelProgress(event.detail);
+    window.addEventListener("foundit-model-progress", update);
+    return () => window.removeEventListener("foundit-model-progress", update);
+  }, []);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState("");
   const [searchFile, setSearchFile] = useState(null);
@@ -299,6 +310,11 @@ function App() {
         </button>
       </header>
       <main>
+        {modelProgress && (
+          <div className="model-progress" role="status">
+            {modelProgress}
+          </div>
+        )}
         <section className="hero">
           <div className="hero-copy">
             <div className="eyebrow">
@@ -422,8 +438,8 @@ function App() {
             </div>
           ) : (
             <p className="search-hint">
-              Search by appearance with CLIP + Qdrant. Results are possible
-              matches, not confirmed identities.
+              Search by appearance with CLIP + {hosted ? "pgvector" : "Qdrant"}.
+              Results are possible matches, not confirmed identities.
             </p>
           )}
         </section>
@@ -537,7 +553,7 @@ function App() {
               <p>
                 {search || activeImage
                   ? "The first search may take longer while CLIP loads."
-                  : "Getting found items from Qdrant."}
+                  : "Getting found items from the database."}
               </p>
             </div>
           ) : apiError ? (
@@ -708,8 +724,8 @@ function App() {
               </div>
               <p className="modal-note">
                 Photos and search queries are encoded by CLIP and compared in
-                Qdrant. Results show visual similarity. Pickup coordination is
-                not connected yet.
+                {hosted ? "pgvector" : "Qdrant"}. Results show visual
+                similarity. Pickup coordination is not connected yet.
               </p>
             </>
           ) : (

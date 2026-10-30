@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><title>FoundIt browser CLIP check</title>
+  <body>
+    <h1>FoundIt browser CLIP check</h1>
+    <button id="run">Verify text and photo embeddings</button>
+    <pre id="status">Ready</pre>
+    <pre id="result"></pre>
+    <script type="module">
+      import { embed } from "/src/browser-clip.js";
+      window.addEventListener(
+        "foundit-model-progress",
+        (e) =>
+          (document.querySelector("#status").textContent =
+            e.detail || "Inference complete"),
+      );
+      document.querySelector("#run").onclick = async () => {
+        const result = document.querySelector("#result");
+        result.textContent = "Running…";
+        try {
+          const text = await embed("text", "a blue square");
+          const canvas = document.createElement("canvas");
+          canvas.width = 224;
+          canvas.height = 224;
+          const picture = async (color) => {
+            canvas.getContext("2d").fillStyle = color;
+            canvas.getContext("2d").fillRect(0, 0, 224, 224);
+            return await new Promise((resolve) =>
+              canvas.toBlob(resolve, "image/jpeg"),
+            );
+          };
+          const blue = await embed("image", await picture("blue"));
+          const red = await embed("image", await picture("red"));
+          const dot = (a, b) => a.reduce((sum, v, i) => sum + v * b[i], 0);
+          const blueScore = dot(text, blue),
+            redScore = dot(text, red);
+          if (
+            text.length !== 512 ||
+            blue.length !== 512 ||
+            blueScore <= redScore
+          )
+            throw new Error(
+              "Embedding check failed: " +
+                JSON.stringify({ blueScore, redScore }),
+            );
+          result.textContent = JSON.stringify(
+            { passed: true, dimensions: text.length, blueScore, redScore },
+            null,
+            2,
+          );
+        } catch (error) {
+          result.textContent = "FAILED: " + error.message;
+        }
+      };
+    </script>
+  </body>
+</html>
