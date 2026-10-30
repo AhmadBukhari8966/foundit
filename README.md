@@ -4,7 +4,21 @@ A campus lost-and-found app. Post a photo of a found item, then search for possi
 
 ## Run locally
 
-Use two terminals in this project folder. The backend dependencies and CLIP weights are already installed on the development machine.
+The backend dependencies and CLIP weights are already installed on the development machine. For a single-server demo, run:
+
+```sh
+npm start
+```
+
+Open http://127.0.0.1:8000. This builds the frontend and serves it from FastAPI alongside the API and photos. In a second terminal, optionally populate the board with labeled stock-photo examples:
+
+```sh
+npm run seed
+```
+
+Seeding needs internet to fetch six stock photos on the first run. Repeating it skips existing tracked samples. The resulting listings are labeled SAMPLE, and the manifest records image source URLs. These are illustrative examples, not actual campus lost items. Keep the server running while seeding or evaluating.
+
+For frontend development with automatic updates, use two terminals instead:
 
 **Terminal 1 — API**
 
@@ -20,7 +34,7 @@ npm run dev
 
 Open http://127.0.0.1:5173. API documentation is at http://127.0.0.1:8000/docs. Vite proxies `/api` and `/uploads` to the backend.
 
-The board starts empty. Post a few item photos to populate it. The old frontend sample listings and browser-only posts are not imported automatically. The backpack in the hero is decorative imagery, not a listing.
+On a fresh install, the board starts empty until you post photos or run the seed command. The backpack in the hero is decorative imagery, not a listing. Real posts can include optional finder-written pickup notes; those notes are not verified by the app.
 
 ## Install on another machine
 
@@ -58,7 +72,7 @@ All endpoints below use the `/api` prefix.
 | GET | `/health` | Database status, item count, model name, and whether CLIP has loaded |
 | GET | `/items` | Listings; supports `category`, `location`, `date_from`, `date_to`, `limit`, and `offset` |
 | GET | `/items/{id}` | A single listing |
-| POST | `/items` | Multipart: `image`, `title`, `description`, `category`, `location`, `found_date` |
+| POST | `/items` | Multipart: `image`, `title`, `description`, `category`, `location`, `found_date`; optional `pickup_notes`, `is_sample` |
 | POST | `/search/text` | JSON: `query`, optional filters, and `limit` |
 | POST | `/search/image` | Multipart: `image`, optional filters, and `limit` |
 
@@ -94,3 +108,23 @@ npm run build
 The API tests use real on-disk Qdrant with a small deterministic encoder to test persistence, filtering, pagination, ranking, upload validation, and model errors. The separate smoke check uses real CLIP with synthetic images and temporary records. Neither measures accuracy on real lost belongings.
 
 For the competition, photograph 20–40 objects, then test descriptions and different photos of those same objects. Measure how often the correct item appears in the first five results. Include similar objects and report failures as well as successes.
+
+## Evaluation and judging
+
+With the server running and the sample board seeded:
+
+```sh
+npm run evaluate
+```
+
+This compares CLIP text retrieval against a token-overlap keyword baseline and writes `data/evaluation.json`. The output reports top-one and top-five success and the rank for each query. Six stock photos are too few to establish real-world accuracy. The tool caps semantic results at 100 candidates and reports an unfound expected item as a miss.
+
+For independently chosen queries, create a JSON array of `{"query":"your description","expected_id":"listing UUID"}` objects and run:
+
+```sh
+.venv/bin/python -m backend.evaluate --cases cases.json --output data/real-evaluation.json
+```
+
+Use queries chosen before seeing search results. Do not submit private evaluation data to Git. The baseline uses title and description token overlap; zero-overlap records are excluded, with UUIDs breaking ties. This is a simple baseline, not a tuned search engine.
+
+See [the judging walkthrough](docs/DEMO.md) for a three-minute demo script, the architecture explanation, and limitations to discuss.

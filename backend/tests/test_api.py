@@ -124,3 +124,20 @@ def test_model_failure_is_actionable_and_does_not_save(tmp_path):
         assert "warmup" in response.json()["detail"]
         assert client.get("/api/health").json()["items"] == 0
         assert list((tmp_path / "uploads").iterdir()) == []
+
+
+def test_pickup_notes_and_sample_label_persist(client):
+    response = post(client, pickup_notes=" Ask the library desk. ", is_sample="true")
+    assert response.status_code == 201
+    item = client.get(f"/api/items/{response.json()['id']}").json()
+    assert item["pickup_notes"] == "Ask the library desk."
+    assert item["is_sample"] is True
+    assert post(client, pickup_notes="x" * 501).status_code == 422
+
+
+def test_image_search_applies_dates(client):
+    post(client)
+    response = client.post("/api/search/image", data={"date_from":"2026-01-02"},
+        files={"image":("query.png", image_bytes(), "image/png")})
+    assert response.status_code == 200
+    assert response.json()["items"] == []

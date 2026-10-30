@@ -149,7 +149,8 @@ def create_app(data_dir=None, encoder=None):
     @app.post("/api/items", status_code=201)
     def create_item(image: UploadFile = File(...), title: str = Form(...),
                     description: str = Form(...), category: str = Form(...),
-                    location: str = Form(...), found_date: date = Form(...)):
+                    location: str = Form(...), found_date: date = Form(...),
+                    pickup_notes: str = Form(""), is_sample: bool = Form(False)):
         title, description = title.strip(), description.strip()
         if not 1 <= len(title) <= 70 or not 1 <= len(description) <= 500:
             raise HTTPException(422, "Provide a title (1–70 characters) and description (1–500 characters).")
@@ -157,13 +158,17 @@ def create_app(data_dir=None, encoder=None):
             raise HTTPException(422, "Select a valid category and location.")
         if found_date > date.today():
             raise HTTPException(422, "The found date cannot be in the future.")
+        pickup_notes = pickup_notes.strip()
+        if len(pickup_notes) > 500:
+            raise HTTPException(422, "Pickup notes must be at most 500 characters.")
         picture = decode_image(image)
         vector = clip.encode(picture)
         item_id = str(uuid4())
         path = uploads / f"{item_id}.jpg"
         payload = {"title": title, "description": description, "category": category,
                    "location": location, "date": found_date.isoformat(),
-                   "found_day": found_date.toordinal(), "image": f"/uploads/{item_id}.jpg"}
+                   "found_day": found_date.toordinal(), "image": f"/uploads/{item_id}.jpg",
+                   "pickup_notes": pickup_notes, "is_sample": is_sample}
         picture.save(path, "JPEG", quality=88)
         try:
             with db_lock:
@@ -191,6 +196,11 @@ def create_app(data_dir=None, encoder=None):
                      date_to: Optional[date] = Form(None), limit: int = Form(60, ge=1, le=100)):
         filters = build_filter(category, location, date_from, date_to)
         return search(clip.encode(decode_image(image)), filters, limit)
+
+    # Serve the built frontend from the same origin for the one-command demo.
+    # API and upload routes must be registered before this catch-all mount.
+    if (ROOT / "dist" / "index.html").exists():
+        app.mount("/", StaticFiles(directory=str(ROOT / "dist"), html=True), name="frontend")
 
     return app
 

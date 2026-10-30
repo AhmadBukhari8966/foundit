@@ -1,0 +1,8 @@
+[
+  {"key":"backpack","title":"Everyday black backpack","category":"Bags","location":"Student Center","photo":"photo-1553062407-98eeb64c6a62","description":"Dark rucksack with shoulder straps and a front compartment.","query":"a black backpack"},
+  {"key":"bottle","title":"Reusable water bottle","category":"Bottles","location":"Library","photo":"photo-1602143407151-7111542de6e8","description":"A reusable drinking container.","query":"a water bottle"},
+  {"key":"headphones","title":"Over-ear headphones","category":"Electronics","location":"Engineering Hall","photo":"photo-1505740420928-5e560c06d30e","description":"Over-ear audio gear with padded ear cups.","query":"something to listen to music with"},
+  {"key":"notebook","title":"A notebook for class","category":"Other","location":"Library","photo":"photo-1531346878377-a5be20888e57","description":"A paper journal for writing notes.","query":"a notebook"},
+  {"key":"sunglasses","title":"A pair of sunglasses","category":"Accessories","location":"Student Center","photo":"photo-1511499767150-a48a237f0083","description":"Dark eyewear with a thin frame.","query":"something to protect my eyes from sunlight"},
+  {"key":"watch","title":"Silver wristwatch","category":"Accessories","location":"Engineering Hall","photo":"photo-1523275335684-37898b6baf30","description":"An analog timepiece with a light face.","query":"something I wear on my wrist to tell time"}
+]

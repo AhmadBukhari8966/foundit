@@ -1,0 +1,54 @@
+{
+  "kind": "illustrative stock-photo demo",
+  "items": 6,
+  "cases": 6,
+  "summary": {
+    "clip": {
+      "top_1": 1.0,
+      "top_5": 1.0
+    },
+    "keyword": {
+      "top_1": 0.5,
+      "top_5": 0.6666666666666666
+    }
+  },
+  "results": [
+    {
+      "query": "a black backpack",
+      "expected_id": "0252575e-ec9c-4cc2-a7a9-5be0f7c08c50",
+      "clip_rank": 1,
+      "keyword_rank": 1
+    },
+    {
+      "query": "a water bottle",
+      "expected_id": "96d8c546-da35-453f-8abc-8f897ffa9f11",
+      "clip_rank": 1,
+      "keyword_rank": 1
+    },
+    {
+      "query": "something to listen to music with",
+      "expected_id": "53d4f01d-1809-4759-84b7-509a8775fd27",
+      "clip_rank": 1,
+      "keyword_rank": 3
+    },
+    {
+      "query": "a notebook",
+      "expected_id": "22dfa8e8-3cdd-4ab8-8426-c0da3d1e2ccd",
+      "clip_rank": 1,
+      "keyword_rank": 1
+    },
+    {
+      "query": "something to protect my eyes from sunlight",
+      "expected_id": "16cfede7-9d99-43a4-969b-93fd3d0f2154",
+      "clip_rank": 1,
+      "keyword_rank": null
+    },
+    {
+      "query": "something I wear on my wrist to tell time",
+      "expected_id": "de9a4baf-726a-4adb-afbd-ac263cfee27a",
+      "clip_rank": 1,
+      "keyword_rank": null
+    }
+  ],
+  "limitations": "Small demo cases are not a benchmark. Top-five success is weak evidence when there are only six candidates. Search ranks are capped at 100 candidates."
+}
