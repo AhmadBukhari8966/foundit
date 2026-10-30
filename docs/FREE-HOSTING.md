@@ -1,5 +1,9 @@
 # Free hosting path
 
+Live site: https://ahmadbukhari8966.github.io/foundit/
+
+The Free Supabase project is provisioned, and guest sign-ins were enabled with explicit approval. A public-browser upload and both text/photo search were verified against a stock-photo demo listing. A separate unauthenticated client could read the listing/photo and could not edit it. These are functionality checks with one demo item, not a retrieval-accuracy benchmark.
+
 This path preserves the app's text and image search without running a paid Python server:
 
 - GitHub Pages serves the React interface and browser worker.

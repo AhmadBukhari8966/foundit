@@ -4,7 +4,7 @@ A campus lost-and-found app. Post a photo of a found item, then search for possi
 
 Public site: https://ahmadbukhari8966.github.io/foundit/
 
-The public site uses browser CLIP and Supabase pgvector. The cloud table, storage policies, and public read/search function are provisioned. Guest posting requires the project’s anonymous sign-in setting to be enabled; that access change is awaiting explicit approval.
+The public site uses browser CLIP and Supabase pgvector, with guest posting enabled. Verified on the live site: photo upload, persistent shared listing/photo storage, text search, and photo search. A clearly labeled stock-photo demo listing is available. Unauthenticated listing edits are blocked.
 
 For the requested free public deployment, see [GitHub Pages + Supabase setup](docs/FREE-HOSTING.md). This uses browser-run CLIP and PostgreSQL/pgvector with persistent photo storage. The original local FastAPI + Qdrant app remains available. A paid Render template is also included but is not being deployed. No public service is provisioned by committing these files.
 
