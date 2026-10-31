@@ -2,7 +2,7 @@
 
 A Truman State University lost-and-found app. Post a photo of a found item, then search for possible matches using a description or another photo.
 
-Public site: https://ahmadbukhari8966.github.io/foundit/
+**Public app: [Open TRUFound](https://ahmadbukhari8966.github.io/foundit/)**
 
 The public site uses browser CLIP and Supabase pgvector, with guest posting enabled. Verified on the live site: photo upload, persistent shared listing/photo storage, text search, and photo search. A clearly labeled stock-photo demo listing is available. Unauthenticated listing edits are blocked.
 
