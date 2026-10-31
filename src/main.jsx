@@ -5,9 +5,10 @@ import {
   Bookmark,
   Camera,
   Check,
-  Compass,
-  Grid2X2,
-  Heart,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Info,
   ImagePlus,
   MapPin,
   Plus,
@@ -20,9 +21,6 @@ import { CampusMap } from "./CampusMap.jsx";
 import { campusBuildings, getBuilding } from "./campus.js";
 const hosted = Boolean(import.meta.env.VITE_SUPABASE_URL);
 
-const photo = (id) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=900&q=85`;
-const heroImage = photo("photo-1553062407-98eeb64c6a62");
 const categories = [
   "All items",
   "Bags",
@@ -107,6 +105,7 @@ function App() {
   const [dateTo, setDateTo] = useState("");
   const [modal, setModal] = useState(null);
   const [mapBuilding, setMapBuilding] = useState("");
+  const [page, setPage] = useState(1);
   const [toast, setToast] = useState("");
   const [queryImage, setQueryImage] = useState(null);
   const imageInput = useRef(null);
@@ -212,6 +211,16 @@ function App() {
           ? b.date.localeCompare(a.date)
           : a.date.localeCompare(b.date),
     );
+  const pageCount = Math.max(1, Math.ceil(filtered.length / 4));
+  const currentPage = Math.min(page, pageCount);
+  const pageItems = filtered.slice((currentPage - 1) * 4, currentPage * 4);
+  useEffect(() => setPage(1), [search, activeImage, category, location, dateFrom, dateTo, tab, sort, refresh]);
+  const clearFilters = () => {
+    setCategory("All items");
+    setLocation("All locations");
+    setDateFrom("");
+    setDateTo("");
+  };
   const clearSearch = () => {
     setSearch("");
     setQuery("");
@@ -271,290 +280,62 @@ function App() {
   };
   return (
     <>
+      <a className="skip-link" href="#items">Skip to results</a>
       <header className="header">
-        <a
-          href="#"
-          className="brand"
-          aria-label="TRUFound home"
-          onClick={() => setTab("browse")}
-        >
-          <span className="brand-mark">
-            <Compass size={24} />
-          </span>
-          TRUFound<span className="brand-dot">.</span>
+        <a href="#" className="brand" aria-label="TRUFound home" onClick={() => setTab("browse")}>
+          <span><span className="brand-purple">TRU</span>Found</span>
+          <small>TRUMAN STATE UNIVERSITY</small>
         </a>
         <nav aria-label="Main navigation">
-          <button
-            className={tab === "browse" ? "nav-link active" : "nav-link"}
-            onClick={() => {
-              setTab("browse");
-              browseRef.current?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            Browse items
-          </button>
-          <button
-            className={tab === "saved" ? "nav-link active" : "nav-link"}
-            onClick={() => {
-              setTab("saved");
-              browseRef.current?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            Saved <span className="saved-count">{saved.length}</span>
-          </button>
-          <button
-            className="nav-link"
-            onClick={() => {
-              setMapBuilding(getBuilding(location) ? location : "");
-              setModal("map");
-            }}
-          >
-            Campus map
-          </button>
-          <button className="nav-link how-link" onClick={() => setModal("how")}>
-            How it works
-          </button>
+          <button className={`nav-link ${tab === "browse" ? "active" : ""}`} onClick={() => setTab("browse")}>Browse items</button>
+          <button className={`nav-link ${tab === "saved" ? "active" : ""}`} onClick={() => setTab("saved")}>Saved <span className="saved-count">{saved.length}</span></button>
+          <button className="nav-link" onClick={() => setModal("how")}>How it works</button>
         </nav>
-        <button
-          className="button primary header-post"
-          onClick={() => setModal("post")}
-        >
-          <Plus size={17} /> Post a found item
-        </button>
+        <button className="button primary header-post" onClick={() => setModal("post")}><Plus size={20} />Post a found item</button>
       </header>
-      <main>
-        {modelProgress && (
-          <div className="model-progress" role="status">
-            {modelProgress}
-          </div>
-        )}
-        <section className="hero">
-          <div className="hero-copy">
-            <div className="eyebrow">
-              <span className="status-dot" /> SMALL CAMPUS. GOOD PEOPLE.
-            </div>
-            <h1>
-              Lost happens.
-              <br />
-              <span>Found feels better.</span>
-            </h1>
-            <p>
-              Your favorite things have a way of finding their way back.
-              <br className="desktop-break" /> Let’s help them along.
-            </p>
-            <div className="hero-actions">
-              <a className="button primary" href="#items">
-                Find my thing <ArrowRight size={17} />
-              </a>
-              <button className="text-button" onClick={() => setModal("post")}>
-                Found something? <ArrowUpRight />
-              </button>
-            </div>
-            <div className="community-note">
-              <span className="tiny-avatars">
-                <img src="https://i.pravatar.cc/64?img=47" alt="" />
-                <img src="https://i.pravatar.cc/64?img=12" alt="" />
-                <img src="https://i.pravatar.cc/64?img=49" alt="" />
-              </span>
-              <span>A little help from your campus community.</span>
-            </div>
-          </div>
-          <div
-            className="hero-art"
-            aria-label="Illustration of belongings finding their way home"
-          >
-            <div className="art-grid" />
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
-            <span className="art-spark spark-one">✳</span>
-            <span className="art-spark spark-two">+</span>
-            <div className="floating-label">
-              <span className="round-check">
-                <Check size={13} />
-              </span>{" "}
-              Back where it belongs.
-            </div>
-            <div className="polaroid">
-              <div className="polaroid-photo">
-                <img src={heroImage} alt="Black backpack" />
+      <main className="workspace">
+        <div className="results-column">
+          {modelProgress && <div className="model-progress" role="status">{modelProgress}</div>}
+          <section className="search-section" aria-label="Find an item">
+            <h1>Find what you’re missing.</h1>
+            <form className="search-box" onSubmit={submitSearch}>
+              <div className="description-search">
+                <Search size={21} />
+                <input aria-label="Describe your lost item" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Backpack, water bottle, keys…" />
+                {(query || search || queryImage) && <button className="icon-button" type="button" onClick={clearSearch} aria-label="Clear search"><X size={18} /></button>}
               </div>
-              <div className="polaroid-caption">
-                <span>Someone’s everyday essential.</span>
-                <Heart size={16} />
+              <button type="button" className="button photo-search" onClick={() => imageInput.current.click()}><Camera size={21} />Search by photo</button>
+              <button className="button primary search-submit" type="submit">Find matches</button>
+              <input ref={imageInput} type="file" accept="image/*" hidden onChange={chooseImage} />
+            </form>
+            {queryImage ? (
+              <div className="query-image">
+                <img src={queryImage} alt="Selected search photo" />
+                <div><strong>Your search photo</strong><span>Press Find matches. Photo search takes priority over text.</span></div>
+                <button className="icon-button" aria-label="Remove search photo" onClick={() => { setQueryImage(null); setSearchFile(null); setActiveImage(null); }}><X size={18} /></button>
               </div>
-              <span className="tape" />
+            ) : <p className="search-hint">Upload a photo of a similar item to search by appearance.</p>}
+            <div className="filters">
+              <label>Category<select aria-label="Filter by category" value={category} onChange={(e) => setCategory(e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
+              <label>Campus building<select aria-label="Filter by location" value={location} onChange={(e) => setLocation(e.target.value)}>{locations.map(l => <option key={l}>{l}</option>)}</select></label>
+              <details className="date-filter-menu">
+                <summary>Date found <span>{dateFrom || dateTo ? "Date range set" : "Any date"}<CalendarDays size={16} /></span></summary>
+                <div className="date-filters">
+                  <label>Found from<input type="date" aria-label="Found from" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} max={dateTo || undefined} /></label>
+                  <label>Through<input type="date" aria-label="Found through" value={dateTo} onChange={(e) => setDateTo(e.target.value)} min={dateFrom || undefined} /></label>
+                  <button className="text-button" onClick={() => {setDateFrom(""); setDateTo("");}}>Clear dates</button>
+                </div>
+              </details>
+              <button className="text-button clear-filters" onClick={clearFilters}>Clear filters</button>
             </div>
-            <div className="mini-note">
-              <MapPin size={17} />
-              <div>
-                Found around campus<span>One less thing to worry about.</span>
-              </div>
+          </section>
+          <section className="items-section" id="items" ref={browseRef} aria-label="Found item results">
+            <div className="section-heading">
+              <div className="section-title"><h2>{tab === "saved" ? "Your saved items" : search || activeImage ? "Possible matches" : "Found around campus"}</h2><span className="item-count" aria-live="polite">{loading ? "Loading…" : `${filtered.length} items`}</span></div>
+              {!search && !activeImage && <label className="sort-label">Sort by<select aria-label="Sort items" value={sort} onChange={(e) => setSort(e.target.value)}><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>}
             </div>
-            <span className="art-caption">GOOD THINGS COME BACK AROUND ↗</span>
-          </div>
-        </section>
-        <section className="search-section" aria-label="Find an item">
-          <div className="search-heading">
-            <span>
-              <Sparkles size={16} /> A description. A photo. A place to start.
-            </span>
-            <span className="demo-pill">VECTOR SEARCH</span>
-          </div>
-          <form className="search-box" onSubmit={submitSearch}>
-            <Search size={22} />
-            <input
-              aria-label="Describe your lost item"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Blue water bottle? Black backpack? Tell us what’s missing…"
-            />
-            <button
-              type="button"
-              className="photo-search"
-              onClick={() => imageInput.current.click()}
-            >
-              <Camera size={19} />
-              <span>Use a photo</span>
-            </button>
-            <button className="button primary search-submit" type="submit">
-              Find matches <ArrowRight size={17} />
-            </button>
-            <input
-              ref={imageInput}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={chooseImage}
-            />
-          </form>
-          {queryImage ? (
-            <div className="query-image">
-              <img src={queryImage} alt="Selected search photo" />
-              <div>
-                <strong>Your search photo</strong>
-                <span>
-                  Ready for visual search. Photo search takes priority over
-                  text.
-                </span>
-              </div>
-              <button
-                className="icon-button"
-                aria-label="Remove search photo"
-                onClick={() => {
-                  setQueryImage(null);
-                  setSearchFile(null);
-                  setActiveImage(null);
-                }}
-              >
-                <X size={17} />
-              </button>
-            </div>
-          ) : (
-            <p className="search-hint">
-              Search by appearance with CLIP + {hosted ? "pgvector" : "Qdrant"}.
-              Results are possible matches, not confirmed identities.
-            </p>
-          )}
-        </section>
-        <section className="items-section" id="items" ref={browseRef}>
-          <div className="section-heading">
-            <div className="section-title">
-              <span className="eyebrow">
-                A SECOND LOOK COULD BE ALL IT TAKES
-              </span>
-              <h2>
-                {tab === "saved" ? "Your saved finds" : "Around campus"}
-                <span className="item-count">{filtered.length}</span>
-              </h2>
-              <p>
-                {tab === "saved"
-                  ? "Keep an eye on the things that look familiar."
-                  : "Found things, waiting for familiar faces."}
-              </p>
-            </div>
-            <label
-              className="sort-label"
-              style={search || activeImage ? { visibility: "hidden" } : {}}
-            >
-              Sort by{" "}
-              <select
-                aria-label="Sort items"
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-              >
-                <option value="newest">Newest first</option>
-                <option value="oldest">Oldest first</option>
-              </select>
-            </label>
-          </div>
-          <div className="filters">
-            <div className="category-tabs" aria-label="Item categories">
-              {categories.map((c) => (
-                <button
-                  key={c}
-                  className={`category ${category === c ? "selected" : ""}`}
-                  onClick={() => setCategory(c)}
-                >
-                  {c === "All items" && <Grid2X2 size={14} />} {c}
-                </button>
-              ))}
-            </div>
-            <label className="location-filter">
-              <MapPin size={15} />
-              <select
-                aria-label="Filter by location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              >
-                {locations.map((l) => (
-                  <option key={l}>{l}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div className="date-filters">
-            <label>
-              Found from
-              <input
-                type="date"
-                aria-label="Found from"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                max={dateTo || undefined}
-              />
-            </label>
-            <label>
-              Through
-              <input
-                type="date"
-                aria-label="Found through"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                min={dateFrom || undefined}
-              />
-            </label>
-            {(dateFrom || dateTo) && (
-              <button
-                className="text-button"
-                onClick={() => {
-                  setDateFrom("");
-                  setDateTo("");
-                }}
-              >
-                Clear dates <X size={13} />
-              </button>
-            )}
-          </div>
-          {(search || activeImage) && (
-            <div className="search-summary">
-              {activeImage
-                ? "Results for your photo"
-                : `Results for “${search}”`}{" "}
-              <button onClick={clearSearch}>
-                Clear search <X size={13} />
-              </button>
-            </div>
-          )}
+            <p className="results-note"><Info size={16} />Possible matches, not confirmed identities.</p>
+            {(search || activeImage) && <div className="search-summary">{activeImage ? "Results for your photo" : `Results for “${search}”`}<button onClick={clearSearch}>Clear search <X size={14} /></button></div>}
           {loading ? (
             <div className="empty-state" role="status">
               <Sparkles size={32} />
@@ -582,7 +363,7 @@ function App() {
             </div>
           ) : filtered.length ? (
             <div className="item-grid">
-              {filtered.map((item) => (
+              {pageItems.map((item) => (
                 <article className="item-card" key={item.id}>
                   <div className="card-photo">
                     <button
@@ -618,20 +399,13 @@ function App() {
                     <span className="photo-category">{item.category}</span>
                   </div>
                   <div className="card-info">
-                    <div className="card-meta">
-                      <span>
-                        <MapPin size={13} />
-                        {item.location}
-                      </span>
-                      <time dateTime={item.date}>{dateLabel(item.date)}</time>
-                    </div>
-                    <button
-                      className="card-title"
-                      onClick={() => setModal(item)}
-                    >
+                    <button className="card-title" onClick={() => setModal(item)}>
                       {item.title}
-                      <ArrowRight size={16} />
                     </button>
+                    <div className="card-meta">
+                      <span><MapPin size={15} />{item.location}</span>
+                      <span><CalendarDays size={15} /><time dateTime={item.date}>Found {dateLabel(item.date)}</time></span>
+                    </div>
                     <p>{item.description}</p>
                   </div>
                 </article>
@@ -665,36 +439,23 @@ function App() {
               </button>
             </div>
           )}
-          <div className="board-note">
-            <span className="status-dot" /> Photos and listings are saved on the
-            backend. Bookmarks stay in this browser.
+
+            {!loading && !apiError && filtered.length > 4 && <nav className="pagination" aria-label="Results pages">
+              <button className="text-button" disabled={currentPage === 1} onClick={() => {setPage(currentPage - 1); browseRef.current?.scrollIntoView({behavior:"smooth"});}}><ChevronLeft size={18} />Previous</button>
+              <span aria-live="polite">Page {currentPage} of {pageCount}</span>
+              <button className="text-button" disabled={currentPage === pageCount} onClick={() => {setPage(currentPage + 1); browseRef.current?.scrollIntoView({behavior:"smooth"});}}>Next<ChevronRight size={18} /></button>
+            </nav>}
+            <p className="board-note">Photos and listings are shared. Saved items stay in this browser.</p>
+          </section>
+        </div>
+        <aside className="map-panel" aria-labelledby="campus-map-heading">
+          <div className="map-panel-heading">
+            <h2 id="campus-map-heading">Campus map</h2>
+            <button className="text-button" onClick={() => setModal("map")}>Expand map</button>
           </div>
-        </section>
-        <section className="kindness-banner">
-          <div className="banner-icon">
-            <Heart size={28} />
-          </div>
-          <div>
-            <h2>Found something? Make someone’s day.</h2>
-            <p>A quick photo could turn a bad day around.</p>
-          </div>
-          <button className="button primary" onClick={() => setModal("post")}>
-            Post a found item <Plus size={17} />
-          </button>
-        </section>
+          <CampusMap selected={mapBuilding} onSelect={setMapBuilding} counts={filtered.reduce((all, item) => {all[item.location] = (all[item.location] || 0) + 1; return all;}, {})} onBrowse={(name) => {setLocation(name); browseRef.current?.scrollIntoView({behavior:"smooth"});}} />
+        </aside>
       </main>
-      <footer>
-        <a href="#" className="brand">
-          <span className="brand-mark">
-            <Compass size={20} />
-          </span>
-          TRUFound<span className="brand-dot">.</span>
-        </a>
-        <span>Less lost. More found.</span>
-        <span className="footer-credit">
-          Made for campus, with care. <Heart size={12} />
-        </span>
-      </footer>
       {modal && (
         <Dialog onClose={() => setModal(null)}>
           {modal === "post" ? (
@@ -825,9 +586,6 @@ function App() {
     </>
   );
 }
-function ArrowUpRight() {
-  return <ArrowRight size={15} style={{ transform: "rotate(-35deg)" }} />;
-}
 function Dialog({ children, onClose }) {
   const dialog = useRef(null);
   useEffect(() => {
@@ -839,15 +597,15 @@ function Dialog({ children, onClose }) {
     if (e.key !== "Tab") return;
     const nodes = [
       ...dialog.current.querySelectorAll(
-        "button,input,select,textarea,a[href]",
+        "button,input,select,textarea,a[href],summary,[tabindex]:not([tabindex='-1'])",
       ),
-    ].filter((el) => !el.disabled && el.offsetParent !== null);
+    ].filter((el) => !el.disabled && el.getClientRects().length > 0);
     const first = nodes[0],
       last = nodes.at(-1);
-    if (e.shiftKey && document.activeElement === first) {
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog.current)) {
       e.preventDefault();
       last?.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
+    } else if (!e.shiftKey && (document.activeElement === last || document.activeElement === dialog.current)) {
       e.preventDefault();
       first?.focus();
     }
@@ -1079,7 +837,7 @@ function PostForm({ onSubmit }) {
           <ArrowRight size={17} />
         </button>
         <p className="modal-note">
-          Your photo is stored on the backend and indexed for text and image
+          Your photo is stored and indexed for text and image
           search. Avoid uploading private information.
         </p>
       </form>
