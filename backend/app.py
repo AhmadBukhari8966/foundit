@@ -1,4 +1,5 @@
 import io
+import json
 import logging
 import os
 import warnings
@@ -25,7 +26,7 @@ COLLECTION = "foundit_clip_v1"
 MAX_IMAGE_BYTES = 8 * 1024 * 1024
 MAX_IMAGE_PIXELS = 20_000_000
 CATEGORIES = {"Bags", "Bottles", "Electronics", "Accessories", "Other"}
-LOCATIONS = {"Student Center", "Library", "Engineering Hall"}
+LOCATIONS = {b["name"] for b in json.loads((ROOT / "campus" / "buildings.json").read_text())} | {"Student Center", "Library", "Engineering Hall"}
 logger = logging.getLogger(__name__)
 
 
@@ -113,7 +114,7 @@ def create_app(data_dir=None, encoder=None):
         finally:
             client.close()
 
-    app = FastAPI(title="FoundIt API", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(title="TRUFound API", version="0.1.0", lifespan=lifespan)
     app.add_middleware(CORSMiddleware,
         allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
         allow_methods=["GET", "POST"], allow_headers=["Content-Type"])

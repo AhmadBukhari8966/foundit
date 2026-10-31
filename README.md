@@ -1,6 +1,6 @@
-# FoundIt
+# TRUFound
 
-A campus lost-and-found app. Post a photo of a found item, then search for possible matches using a description or another photo.
+A Truman State University lost-and-found app. Post a photo of a found item, then search for possible matches using a description or another photo.
 
 Public site: https://ahmadbukhari8966.github.io/foundit/
 
@@ -134,3 +134,14 @@ For independently chosen queries, create a JSON array of `{"query":"your descrip
 Use queries chosen before seeing search results. Do not submit private evaluation data to Git. The baseline uses title and description token overlap; zero-overlap records are excluded, with UUIDs breaking ties. This is a simple baseline, not a tuned search engine.
 
 See [the judging walkthrough](docs/DEMO.md) for a three-minute demo script, the architecture explanation, and limitations to discuss.
+
+
+## Campus map and building directions
+
+New posts require a Truman campus building. Choose it in the building list or expand “Mark the building on the campus map” and select a marker. The selection is stored in the existing location field and works with location filters and vector search.
+
+Open an item to see its reported building marked on the 2026 Truman campus map and use “Walking directions” to open Google Maps. The finder supplies the location; image similarity does not identify a physical location. Check pickup notes before traveling because the item may have been moved. The marker identifies a building, not an entrance or room.
+
+The supplied campus map supports 23 mapped buildings/venues. Off-map arrows are not turned into invented positions. Older unrecognized location labels remain readable without a fabricated marker. The original PDF is available from every map panel. Source assets live in `public/maps/`; marker positions and names are in `campus/buildings.json`. The public site URL and storage identifiers remain unchanged so existing posts and bookmarks continue to work.
+
+Map checks: `node --test tests/campus.test.js`. The local backend accepts the same shared building catalog. The hosted schema update is `supabase/migrations/202610300002_truman_locations.sql`.

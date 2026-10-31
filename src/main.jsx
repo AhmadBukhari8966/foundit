@@ -16,6 +16,8 @@ import {
   X,
 } from "lucide-react";
 import "./styles.css";
+import { CampusMap } from "./CampusMap.jsx";
+import { campusBuildings, getBuilding } from "./campus.js";
 const hosted = Boolean(import.meta.env.VITE_SUPABASE_URL);
 
 const photo = (id) =>
@@ -31,6 +33,7 @@ const categories = [
 ];
 const locations = [
   "All locations",
+  ...campusBuildings.map((b) => b.name),
   "Student Center",
   "Library",
   "Engineering Hall",
@@ -103,6 +106,7 @@ function App() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [modal, setModal] = useState(null);
+  const [mapBuilding, setMapBuilding] = useState("");
   const [toast, setToast] = useState("");
   const [queryImage, setQueryImage] = useState(null);
   const imageInput = useRef(null);
@@ -271,13 +275,13 @@ function App() {
         <a
           href="#"
           className="brand"
-          aria-label="FoundIt home"
+          aria-label="TRUFound home"
           onClick={() => setTab("browse")}
         >
           <span className="brand-mark">
             <Compass size={24} />
           </span>
-          foundit<span className="brand-dot">.</span>
+          TRUFound<span className="brand-dot">.</span>
         </a>
         <nav aria-label="Main navigation">
           <button
@@ -297,6 +301,15 @@ function App() {
             }}
           >
             Saved <span className="saved-count">{saved.length}</span>
+          </button>
+          <button
+            className="nav-link"
+            onClick={() => {
+              setMapBuilding(getBuilding(location) ? location : "");
+              setModal("map");
+            }}
+          >
+            Campus map
           </button>
           <button className="nav-link how-link" onClick={() => setModal("how")}>
             How it works
@@ -675,7 +688,7 @@ function App() {
           <span className="brand-mark">
             <Compass size={20} />
           </span>
-          foundit<span className="brand-dot">.</span>
+          TRUFound<span className="brand-dot">.</span>
         </a>
         <span>Less lost. More found.</span>
         <span className="footer-credit">
@@ -686,6 +699,28 @@ function App() {
         <Dialog onClose={() => setModal(null)}>
           {modal === "post" ? (
             <PostForm onSubmit={addItem} />
+          ) : modal === "map" ? (
+            <>
+              <span className="modal-eyebrow">TRUMAN STATE UNIVERSITY</span>
+              <h2>Find your way back.</h2>
+              <p className="form-intro">
+                Choose a building to browse matching items or open walking
+                directions.
+              </p>
+              <CampusMap
+                selected={mapBuilding}
+                onSelect={setMapBuilding}
+                counts={items.reduce((all, item) => {
+                  all[item.location] = (all[item.location] || 0) + 1;
+                  return all;
+                }, {})}
+                onBrowse={(name) => {
+                  setLocation(name);
+                  setModal(null);
+                  browseRef.current?.scrollIntoView({ behavior: "smooth" });
+                }}
+              />
+            </>
           ) : modal === "how" ? (
             <>
               <span className="modal-eyebrow">
@@ -746,6 +781,7 @@ function App() {
                 <span>{dateLabel(modal.date)}</span>
               </div>
               <p className="detail-description">{modal.description}</p>
+              <CampusMap selected={modal.location} readOnly />
               <div className="handoff-note">
                 <MapPin size={20} />
                 <div>
@@ -827,7 +863,7 @@ function Dialog({ children, onClose }) {
         className="modal"
         role="dialog"
         aria-modal="true"
-        aria-label="FoundIt item information"
+        aria-label="TRUFound item information"
         ref={dialog}
         tabIndex={-1}
         onKeyDown={trap}
@@ -848,6 +884,7 @@ function PostForm({ onSubmit }) {
   const [image, setImage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [building, setBuilding] = useState("");
   const input = useRef(null);
   const processPhoto = (file) => {
     if (!file) return;
@@ -984,13 +1021,31 @@ function PostForm({ onSubmit }) {
           </label>
         </div>
         <label>
-          Where did you find it?
-          <select name="location">
-            {locations.slice(1).map((l) => (
-              <option key={l}>{l}</option>
+          Which Truman building was it found in or near?
+          <select
+            name="location"
+            required
+            value={building}
+            onChange={(e) => setBuilding(e.target.value)}
+          >
+            <option value="">Select a campus building…</option>
+            {campusBuildings.map((b) => (
+              <option key={b.id}>{b.name}</option>
             ))}
           </select>
         </label>
+        <details className="map-picker">
+          <summary>
+            <MapPin size={16} />
+            Mark the building on the campus map
+            {building && <span>{building}</span>}
+          </summary>
+          <CampusMap
+            selected={building}
+            onSelect={setBuilding}
+            showSelector={false}
+          />
+        </details>
         <label>
           A few more details
           <textarea
@@ -1007,7 +1062,7 @@ function PostForm({ onSubmit }) {
             name="pickup_notes"
             maxLength={500}
             rows={2}
-            placeholder="e.g. Left with the library service desk. Do not include private contact details."
+            placeholder="e.g. Left with the Pickler Library service desk. Do not include private contact details."
           />
         </label>
         {error && (

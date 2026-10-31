@@ -152,3 +152,13 @@ def test_hosted_startup_preloads_model(tmp_path, monkeypatch):
     encoder = WarmableEncoder()
     with TestClient(create_app(tmp_path, encoder)) as client:
         assert client.get("/api/health").json()["model_loaded"] is True
+
+
+def test_truman_building_survives_upload_and_location_filter(client):
+    response = post(client, location="Pickler Memorial Library")
+    assert response.status_code == 201
+    item = response.json()
+    assert item["location"] == "Pickler Memorial Library"
+    matches = client.get("/api/items", params={"location":"Pickler Memorial Library"}).json()["items"]
+    assert [m["id"] for m in matches] == [item["id"]]
+    assert client.get("/api/items", params={"location":"McClain Hall"}).json()["items"] == []

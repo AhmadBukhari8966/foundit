@@ -1,0 +1,140 @@
+[
+  {
+    "id": "west-campus-suites",
+    "name": "West Campus Suites",
+    "x": 19.6,
+    "y": 11.4
+  },
+  {
+    "id": "dr-ruth-w-towne-museum-and-visitors-center",
+    "name": "Dr. Ruth W. Towne Museum & Visitors Center",
+    "x": 43.0,
+    "y": 3.8
+  },
+  {
+    "id": "mcclain-hall",
+    "name": "McClain Hall",
+    "x": 45.8,
+    "y": 14.0
+  },
+  {
+    "id": "baldwin-hall",
+    "name": "Baldwin Hall",
+    "x": 53.8,
+    "y": 14.0
+  },
+  {
+    "id": "ophelia-parrish",
+    "name": "Ophelia Parrish",
+    "x": 76.6,
+    "y": 13.3
+  },
+  {
+    "id": "missouri-hall",
+    "name": "Missouri Hall",
+    "x": 76.8,
+    "y": 19.8
+  },
+  {
+    "id": "rec-center",
+    "name": "REC Center",
+    "x": 32.9,
+    "y": 18.3
+  },
+  {
+    "id": "pickler-memorial-library",
+    "name": "Pickler Memorial Library",
+    "x": 54.3,
+    "y": 23.9
+  },
+  {
+    "id": "kirk-memorial",
+    "name": "Kirk Memorial",
+    "x": 62.1,
+    "y": 27.1
+  },
+  {
+    "id": "kirk-building",
+    "name": "Kirk Building",
+    "x": 69.9,
+    "y": 27.0
+  },
+  {
+    "id": "student-union-building",
+    "name": "Student Union Building",
+    "x": 44.8,
+    "y": 29.5
+  },
+  {
+    "id": "centennial-hall",
+    "name": "Centennial Hall",
+    "x": 32.0,
+    "y": 28.8
+  },
+  {
+    "id": "bnb-hall",
+    "name": "BNB Hall",
+    "x": 78.9,
+    "y": 31.2
+  },
+  {
+    "id": "magruder-hall",
+    "name": "Magruder Hall",
+    "x": 54.3,
+    "y": 38.5
+  },
+  {
+    "id": "violette-hall",
+    "name": "Violette Hall",
+    "x": 67.0,
+    "y": 40.3
+  },
+  {
+    "id": "dobson-hall",
+    "name": "Dobson Hall",
+    "x": 77.2,
+    "y": 40.4
+  },
+  {
+    "id": "general-services-building",
+    "name": "General Services Building",
+    "x": 47.1,
+    "y": 52.2
+  },
+  {
+    "id": "ryle-hall",
+    "name": "Ryle Hall",
+    "x": 77.6,
+    "y": 51.2
+  },
+  {
+    "id": "pershing-building",
+    "name": "Pershing Building",
+    "x": 51.5,
+    "y": 59.7
+  },
+  {
+    "id": "health-sciences-building",
+    "name": "Health Sciences Building",
+    "x": 61.0,
+    "y": 61.0
+  },
+  {
+    "id": "stokes-stadium",
+    "name": "Stokes Stadium",
+    "x": 69.9,
+    "y": 70.8
+  },
+  {
+    "id": "barnett-hall",
+    "name": "Barnett Hall",
+    "x": 29.5,
+    "y": 77.0
+  },
+  {
+    "id": "campbell-apartments",
+    "name": "Campbell Apartments",
+    "x": 87.9,
+    "y": 86.5
+  }
+]

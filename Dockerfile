@@ -5,6 +5,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY index.html vite.config.js ./
 COPY src ./src
+COPY campus ./campus
+COPY public ./public
 RUN npm run build
 
 FROM python:3.11-slim-bookworm AS runtime
@@ -29,6 +31,7 @@ COPY backend/requirements.txt ./backend/requirements.txt
 RUN pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu && \
     pip install -r backend/requirements.txt
 COPY --chown=appuser:appuser backend ./backend
+COPY --chown=appuser:appuser campus ./campus
 COPY --from=frontend --chown=appuser:appuser /build/dist ./dist
 USER appuser
 # Cache model weights in the image, separate from the mounted data volume.

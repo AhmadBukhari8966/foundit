@@ -1750,3 +1750,345 @@ footer > .footer-credit {
   box-shadow: 0 4px 20px #0002;
   overflow-wrap: anywhere;
 }
+
+/* Campus location selection and owner directions. */
+.campus-map {
+  margin: 18px 0;
+  border: 1px solid #dce2d2;
+  border-radius: 12px;
+  background: #f7f9f2;
+  overflow: hidden;
+  text-align: left;
+}
+.map-select {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 8px;
+  font-size: 12px;
+  font-weight: 550;
+}
+.map-select select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d9dfcf;
+  border-radius: 7px;
+  background: #fffef9;
+  font-size: 12px;
+  color: #384e31;
+}
+.map-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 10px;
+  color: #637454;
+}
+.map-toolbar > span,
+.map-toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.map-toolbar > div > span {
+  font-variant-numeric: tabular-nums;
+  min-width: 30px;
+  text-align: center;
+}
+.map-toolbar .icon-button {
+  background: #e7eddd;
+}
+.map-toolbar .icon-button:disabled {
+  cursor: default;
+}
+.map-viewport {
+  overflow: auto;
+  max-height: 400px;
+  min-height: 180px;
+  background: #dfe5d8;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.map-viewport:focus-visible {
+  outline: 3px solid #879d66;
+  outline-offset: -3px;
+}
+.map-stage {
+  position: relative;
+  min-width: 100%;
+  line-height: 0;
+}
+.map-stage > img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+}
+.building-pin {
+  position: absolute;
+  transform: translate(-50%, -70%);
+  width: 28px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: #fffef9;
+  color: #4b6037;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #14250e66;
+  z-index: 1;
+  padding: 2px;
+  line-height: 1.2;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+}
+.building-pin svg {
+  stroke: #fff;
+  stroke-width: 1.7;
+}
+.building-pin:hover,
+.building-pin:focus-visible {
+  z-index: 4;
+  background: #e8f0d8;
+  outline: 3px solid #f5db58;
+  outline-offset: 3px;
+}
+.building-pin.selected {
+  width: 38px;
+  height: 42px;
+  background: #5e2181;
+  color: #5e2181;
+  box-shadow:
+    0 0 0 5px #fff9,
+    0 3px 12px #35144788;
+  z-index: 3;
+}
+.building-pin.selected svg {
+  stroke: #fff;
+  stroke-width: 1.7;
+}
+.building-pin.has-items:not(.selected) {
+  background: #e0ecc8;
+}
+.pin-label {
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: #2c3b24;
+  color: white;
+  font-size: 9px;
+  line-height: 1.4;
+  max-width: 180px;
+  width: max-content;
+  white-space: normal;
+  box-shadow: 0 2px 8px #0002;
+  display: none;
+}
+.building-pin.selected .pin-label,
+.building-pin:hover .pin-label,
+.building-pin:focus-visible .pin-label {
+  display: block;
+}
+.pin-count {
+  position: absolute;
+  right: -6px;
+  top: -7px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: #4b6037;
+  color: white;
+  font-size: 8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 2px;
+  border: 1px solid white;
+}
+.map-selection {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid #e0e6d7;
+}
+.map-building-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: #e8ecdf;
+  color: #6b367d;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.map-selection strong {
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+  line-height: 1.5;
+}
+.map-selection div > span {
+  display: block;
+  font-size: 9px;
+  color: #7d8872;
+  line-height: 1.6;
+  margin-top: 3px;
+}
+.map-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 14px 12px;
+}
+.map-actions .button {
+  font-size: 11px;
+  padding: 11px 13px;
+  gap: 7px;
+}
+.map-note {
+  font-size: 10px;
+  color: #78866c;
+  line-height: 1.7;
+  margin: 0;
+  padding: 0 14px 12px;
+}
+.map-source {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  color: #78866c;
+  padding: 10px 14px;
+  border-top: 1px solid #e0e6d7;
+  background: #f1f4e9;
+}
+.map-source:hover {
+  text-decoration: underline;
+}
+.unmapped-location {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: #f1f4e9;
+  padding: 13px;
+  margin: 18px 0;
+  border-radius: 8px;
+  color: #7a886d;
+}
+.unmapped-location p {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 0;
+}
+.map-picker {
+  border: 1px solid #dce3d3;
+  border-radius: 9px;
+  background: #f6f8ef;
+}
+.map-picker > summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px;
+  font-size: 11px;
+  font-weight: 550;
+  list-style: none;
+}
+.map-picker > summary:after {
+  content: "+";
+  margin-left: auto;
+  font-size: 18px;
+  font-weight: 400;
+}
+.map-picker[open] > summary:after {
+  content: "−";
+}
+.map-picker > summary > span {
+  font-weight: 400;
+  color: #859174;
+  font-size: 9px;
+  max-width: 140px;
+  margin-left: auto;
+  line-height: 1.5;
+}
+.map-picker > .campus-map {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid #e0e6d7;
+  border-radius: 0 0 9px 9px;
+}
+@media (max-width: 760px) {
+  .header nav {
+    gap: 11px;
+  }
+  .header .brand {
+    font-size: 23px;
+  }
+  .header .brand-mark {
+    margin-right: 5px;
+  }
+  .map-viewport {
+    max-height: 330px;
+  }
+  .map-toolbar {
+    font-size: 9px;
+  }
+  .map-selection strong {
+    font-size: 11px;
+  }
+}
+@media (max-width: 520px) {
+  .header {
+    gap: 7px;
+    padding: 0 14px;
+  }
+  .header .brand {
+    font-size: 20px;
+    letter-spacing: -1.2px;
+  }
+  .header .brand-mark {
+    width: 25px;
+    height: 25px;
+  }
+  .header .brand-mark svg {
+    width: 19px;
+  }
+  .header nav {
+    gap: 10px;
+  }
+  .nav-link {
+    font-size: 10px;
+  }
+  .saved-count {
+    margin-left: 2px;
+  }
+  .header-post {
+    padding: 9px;
+  }
+  .header-post:after {
+    display: none;
+  }
+  .map-picker > summary > span {
+    max-width: 100px;
+  }
+  .map-toolbar > span {
+    font-size: 8px;
+  }
+  .building-pin {
+    width: 24px;
+    height: 27px;
+  }
+  .map-actions {
+    flex-direction: column;
+  }
+  .map-actions .button {
+    width: 100%;
+  }
+}
